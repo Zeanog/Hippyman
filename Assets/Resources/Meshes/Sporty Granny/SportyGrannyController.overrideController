@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SportyGrannyController
+  m_Controller: {fileID: 9100000, guid: 7d6b989a7fe049644935189f1725898e, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 56655f51097e4874c9f6e8eaca29d8e9,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: da39dedbda051874f9565daf96948a0c,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 86e0631652c7c4a4c9db4e0126bf0eb9,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 3719edccc0d18e24894136f0516413d2,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 00cc3f7fe0510ff40ae5c6f9e67ccd6f,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 00cc3f7fe0510ff40ae5c6f9e67ccd6f,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: a158d95aebfcac64b92b331f84d1355b,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 94195c8e4eb748e4db1c924a0690d741,
+      type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 94195c8e4eb748e4db1c924a0690d741,
+      type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: a158d95aebfcac64b92b331f84d1355b,
+      type: 3}
