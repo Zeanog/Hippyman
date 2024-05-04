@@ -4339,12 +4339,12 @@ PrefabInstance:
     - target: {fileID: 2604166964309967305, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
       propertyPath: color.g
-      value: 0.16509432
+      value: 0.6778845
       objectReference: {fileID: 0}
     - target: {fileID: 2604166964309967305, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
       propertyPath: color.r
-      value: 0.90195566
+      value: 0.23584908
       objectReference: {fileID: 0}
     - target: {fileID: 5679123407398328711, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
@@ -4396,6 +4396,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6380042305199293453, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
+        type: 3}
+      propertyPath: TargetCorner
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6743393490414338780, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
+        type: 3}
+      propertyPath: m_OnEnter.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_StringArgument
+      value: StartWalking
+      objectReference: {fileID: 0}
+    - target: {fileID: 7763972557755473442, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
+        type: 3}
+      propertyPath: m_OnEnter.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_StringArgument
+      value: StartWalking
+      objectReference: {fileID: 0}
     - target: {fileID: 8865922593801097638, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
       propertyPath: m_Name
@@ -4404,7 +4419,7 @@ PrefabInstance:
     - target: {fileID: 8865922593801097638, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9086541665651137796, guid: 0b2066d2e8b901f4abb9f2b49e93b06e,
         type: 3}
@@ -7511,6 +7526,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 1740097789310402394, guid: 3dd40f4f2d33e6446bcff9c53ba32cec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3632611974650215264, guid: 3dd40f4f2d33e6446bcff9c53ba32cec,
         type: 3}

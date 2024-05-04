@@ -191,7 +191,7 @@ public class Game : EventManager
             resetAdvisoriesTimer = Timer.Create("EvidenceCollected", duration);
             resetAdvisoriesTimer.OnElapsed.AddListener(() =>
             {
-                BroadcastEvent<EvidenceofCorruption>(Instance, "OnLost", null);
+                BroadcastEvent<EvidenceofCorruption>(this, "OnLost", null);
             });
             resetAdvisoriesTimer.Restart();
         }

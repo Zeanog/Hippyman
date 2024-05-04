@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class Adversary : ControlledAnimatedObject
 {
-    [SerializeField]
-    protected InspectorStateMachine stateMachine;
-
     protected override void Awake()
     {
         Game.Instance.RegisterAdversary(this);
