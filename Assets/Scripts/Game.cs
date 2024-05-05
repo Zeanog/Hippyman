@@ -113,6 +113,10 @@ public class Game : EventManager
         AddListener<Game>("OnGamePause", OnGamePause);
 
         pathFinder = new AStarPathfinder(grid);
+
+        LevelComplete.AddListener( () => {
+            stateMachine.TriggerEvent("OnLevelComplete");
+        } );
     }
 
     protected virtual void Start()
@@ -218,6 +222,7 @@ public class Game : EventManager
         if(Pellet.NumPellets <= 0)
         {
             LevelComplete?.Invoke();
+            RemoveListener<Pellet>("OnCollected", OnPelletCollected);
         }
     }
 
@@ -241,9 +246,9 @@ public class Game : EventManager
         return grid.WorldToGrid(worldPos, out loc);
     }
 
-    public void SimulateEvidenceCollected()
+    public void SimulateEvidenceCollected( float duration )
     {
-        BroadcastEvent<EvidenceofCorruption>(this, "OnCollected", 30f);
+        BroadcastEvent<EvidenceofCorruption>(this, "OnCollected", duration);
     }
 
     public void SimulateEvidenceLost()

@@ -5,13 +5,14 @@ public abstract class AAdversaryController : AController
 {
     protected Path path;
 
-    public Player Player { get; protected set; }
+    public Player Player { get => Game.Instance.Player; }
 
     [SerializeField]
     protected InspectorStateMachine stateMachine;
 
     protected virtual void Awake()
     {
+        
     }
 
     public override void OnAssigned()
@@ -29,15 +30,12 @@ public abstract class AAdversaryController : AController
         Game.Instance.AddListener<EvidenceofCorruption>("OnLost", OnEvidenceLost);
         Game.Instance.AddListener<Adversary>("OnGoToJail", OnGoToJail);
 
-        Player = Game.Instance.Player;
         FindNewPath();
     }
 
     public override void OnUnassigned()
     {
         base.OnUnassigned();
-
-        Player = null;
 
         Game.Instance.RemoveListener<Game>("OnGameStart", OnGameStart);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnCollected", OnEvidenceCollected);

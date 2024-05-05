@@ -5,12 +5,12 @@ public abstract class APickup : MonoBehaviour
 {
     public enum EPickupBehavior
     {
-        Hide,
+        Disable,
         Destroy
     }
 
     [SerializeField]
-    protected EPickupBehavior onPickupBehavior = EPickupBehavior.Hide;
+    protected EPickupBehavior onPickupBehavior = EPickupBehavior.Disable;
 
     [SerializeField]
     protected Vector3 rotationSpeed;
