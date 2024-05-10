@@ -67,8 +67,8 @@ public class Game : EventManager
     protected Timer         resetAdvisoriesTimer;
 
     [SerializeField]
-    protected               Neo.Grid grid;
-    public Neo.Grid Grid => grid;
+    protected               Neo.GridComponent grid;
+    public Neo.GridComponent Grid => grid;
 
     protected AStarPathfinder pathFinder;
 
@@ -207,12 +207,12 @@ public class Game : EventManager
 
     protected void OnPointsCollected(object sender, object evtData)
     {
-        Score += Convert.ToInt32(evtData);
+        Score += Convert.ToSingle(evtData);
     }
 
     protected void OnMoneyCollected(object sender, object evtData)
     {
-        Score += Convert.ToInt32(evtData);
+        Score += Convert.ToSingle(evtData);
     }
 
     protected void OnPelletCollected(object sender, object evtData)

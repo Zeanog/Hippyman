@@ -5,7 +5,10 @@ using UnityEngine;
 public class PickupManager : MonoBehaviour
 {
     [SerializeField]
-    protected Neo.Grid grid;
+    protected float totalScoreOfPellets = 10f;
+
+    [SerializeField]
+    protected Neo.GridComponent grid;
 
     [SerializeField]
     protected Transform pelletsParent;
@@ -96,11 +99,10 @@ public class PickupManager : MonoBehaviour
                 }
             }
 
-            float totalValueOnceAllCollected = 10f;// Dime bag  :D
             foreach (var pelletGO in pelletListSlip.Value)
             {
                 var points = pelletGO.GetComponent<Pellet>();
-                points.Value = (1f / pelletListSlip.Value.Count) * totalValueOnceAllCollected;
+                points.Value = totalScoreOfPellets / (float)pelletListSlip.Value.Count;
             }
         }
     }

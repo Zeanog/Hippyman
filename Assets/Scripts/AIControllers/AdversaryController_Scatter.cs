@@ -3,7 +3,7 @@
 public class AdversaryController_Scatter : AAdversaryController_Vulnerable
 {
     [SerializeField]
-    protected Neo.Grid.ECorner TargetCorner;
+    protected Neo.GridComponent.ECorner TargetCorner;
 
     protected override Path PathToTarget()
     {

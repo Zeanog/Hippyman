@@ -10,9 +10,9 @@ public abstract class AAdversaryController : AController
     [SerializeField]
     protected InspectorStateMachine stateMachine;
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        
+        base.Awake();
     }
 
     public override void OnAssigned()
@@ -73,14 +73,14 @@ public abstract class AAdversaryController : AController
     {
         if (!Player.gameObject.activeInHierarchy)
         {
-            DesiredDirection = Vector3.zero;
+            nextDirection = Vector3.zero;
             return true;
         }
 
         if (path != null && path.IsComplete(Owner.transform.position) && path.IsValid)
         {
             path.Invalidate();
-            DesiredDirection = Vector3.zero;
+            nextDirection = Vector3.zero;
             return true;
         }
 
@@ -91,7 +91,7 @@ public abstract class AAdversaryController : AController
         else
         {
             bool success = path.DetermineNextDirection(Owner.GridLoc, out Vector3 nextDir);
-            DesiredDirection = success ? nextDir : Vector3.zero;
+            nextDirection = success ? nextDir : Vector3.zero;
         }
 
         return true;
@@ -104,14 +104,13 @@ public abstract class AAdversaryController : AController
             path.Invalidate();
         }
 
-        Owner.DesiredDirection = Vector3.zero;//Stop Owner from moving until new path is followed
         path = PathToTarget();
         if (path == null)
         {
             return false;
         }
 
-        DesiredDirection = path.DetermineFirstDirection(out Vector3 startPos);
+        nextDirection = path.DetermineFirstDirection(out Vector3 startPos);
         return true;
     }
 

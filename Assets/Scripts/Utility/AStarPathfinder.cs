@@ -112,6 +112,14 @@ public class Path
         return node != null;
     }
 
+    //TODO: Tell Owner to move to fist node's position.  Then we can start along the path
+    public Vector3 Start()
+    {
+        currentNode = Nodes.First;
+        Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 worldPos);
+        return worldPos;
+    }
+
     public Vector3 DetermineFirstDirection(out Vector3 startPos)
     {
         try
@@ -199,7 +207,7 @@ public class Path
         }
     }
 
-    public void CreateVisualizations(Neo.Grid grid)
+    public void CreateVisualizations(Neo.GridComponent grid)
     {
         GameObject go = null;
         GameObject prevGo = null;
@@ -226,9 +234,9 @@ public class Path
 
 public class AStarPathfinder
 {
-    private Neo.Grid grid;
+    private Neo.GridComponent grid;
 
-    public AStarPathfinder(Neo.Grid extGrid)
+    public AStarPathfinder(Neo.GridComponent extGrid)
     {
         grid = extGrid;
     }
@@ -300,14 +308,14 @@ public class AStarPathfinder
                 return BuildPath(closedSet.First.Value, closedSet.Last.Value);
             }
 
-            for (int ix = 0; ix < Neo.Grid.Compass.Length; ++ix)
+            for (int ix = 0; ix < Neo.GridComponent.Compass.Length; ++ix)
             {
                 if (grid.IsObstructed(currentNode.GridLocation, ix))
                 {
                     continue;
                 }
 
-                Vector2Int neighbor = currentNode.GridLocation + Neo.Grid.Compass[ix];
+                Vector2Int neighbor = currentNode.GridLocation + Neo.GridComponent.Compass[ix];
                 float newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
 
                 Path.Node neighborNode = FindEquivalentOf(neighbor, closedSet);

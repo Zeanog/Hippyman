@@ -35,7 +35,7 @@ namespace Neo.Utility {
     
         protected void Update() {
             if( m_OnUpdate != null ) {
-                m_OnUpdate.Invoke();
+                m_OnUpdate?.Invoke();
             }
             //OnUpdate?.Invoke();
         }
@@ -49,14 +49,14 @@ namespace Neo.Utility {
     
             if( !IsRunning ) {
                 Stop();
-                OnElapsed.Invoke();
+                OnElapsed?.Invoke();
             }
         }
     
         public void  Restart() {
             TimeRemaining = Duration;
     
-            OnRestart.Invoke();
+            OnRestart?.Invoke();
     
             m_OnUpdate = UpdateHandler;
         }
@@ -69,7 +69,7 @@ namespace Neo.Utility {
         public void Stop() {
             m_OnUpdate = null;
             TimeRemaining = 0.0f;
-            OnStop.Invoke();
+            OnStop?.Invoke();
         }
     
         protected static GameObject m_Manager = null;

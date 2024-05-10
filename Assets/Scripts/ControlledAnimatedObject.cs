@@ -21,17 +21,9 @@ public class ControlledAnimatedObject : AAnimatorEventHander
 
     public Vector3 InitialPosition { get; protected set; }
 
-    public virtual Vector3 DesiredDirection { get; set; }
+    public virtual Vector3 DesiredDirection => Controller?.DesiredDirection ?? Vector3.zero;
 
-    protected Vector3 targetDesiredDirection {
-        get {
-            if(Controller == null)
-            {
-                return Vector3.forward;
-            }
-            return Controller.DesiredDirection;
-        }
-    }
+    public virtual Vector3  DesiredPosition => Controller?.DesiredPosition ?? Vector3.zero;
 
     public Vector2Int GridLoc;
     [HideInInspector]
@@ -106,44 +98,44 @@ public class ControlledAnimatedObject : AAnimatorEventHander
 
     protected void OnTurnAroundEnter(string evtName)
     {
-        DesiredDirection = Vector3.zero;
+        //DesiredDirection = Vector3.zero;
     }
 
     protected void  OnTurnAroundExit(string evtName)
     {
         Animator.SetBool("TurningAround", false);
-        DesiredDirection = targetDesiredDirection;
+        //DesiredDirection = targetDesiredDirection;
         transform.rotation = Quaternion.LookRotation(DesiredDirection, Vector3.up);
-        DesiredDirection = Vector3.zero;
+        //DesiredDirection = Vector3.zero;
 
     }
 
     protected void Update()
     {
-        bool forceDirectionUpdate = DesiredDirection == Vector3.zero && !targetDesiredDirection.Equals(DesiredDirection);
-        bool canUpdate = AController.CanChangeDirection(transform.position) && !targetDesiredDirection.Equals(DesiredDirection)/* && !Animator.GetBool("TurningAround")*/;
-        if(forceDirectionUpdate || canUpdate)
-        {
-            Vector3 newDir = targetDesiredDirection;
-            newDir.y = 0.0f;
+        //bool forceDirectionUpdate = DesiredDirection == Vector3.zero && !targetDesiredDirection.Equals(DesiredDirection);
+        //bool canUpdate = Controller.CanChangeDirection(transform.position) && !targetDesiredDirection.Equals(DesiredDirection)/* && !Animator.GetBool("TurningAround")*/;
+        //if(forceDirectionUpdate || canUpdate)
+        //{
+        //    Vector3 newDir = targetDesiredDirection;
+        //    newDir.y = 0.0f;
 
-            if (newDir.x != 0 && newDir.z != 0)
-            {
-                Debug.LogError("Must move only on cardinal directions. Desired direction was ignored");
-                newDir = Vector3.zero;
-            }
+        //    if (newDir.x != 0 && newDir.z != 0)
+        //    {
+        //        Debug.LogError("Must move only on cardinal directions. Desired direction was ignored");
+        //        newDir = Vector3.zero;
+        //    }
 
-            DesiredDirection = newDir;
-        }
+        //    DesiredDirection = newDir;
+        //}
     }
 
     protected virtual void FixedUpdate()
     {
         float stepLength = Controller?.DetermineStepLength() ?? 0f;
 
-        ReachedAWall = stepLength <= Neo.Grid.TileEpsilon;
+        ReachedAWall = stepLength <= Neo.GridComponent.TileEpsilon;
 
-        if (DesiredDirection.sqrMagnitude > 0.001f)
+        if (DesiredDirection != Vector3.zero)
         {
             //if (!this.Animator.GetBool("TurningAround"))
             //{
@@ -157,10 +149,10 @@ public class ControlledAnimatedObject : AAnimatorEventHander
             }
         }
 
-        PrevGridLoc = GridLoc;
         Game.Instance.WorldToGrid(transform.position, out GridLoc);
-        if (!GridLoc.Equals(PrevGridLoc))
+        if (!PrevGridLoc.Equals(GridLoc) && Controller != null && Controller.CanChangeDirection(transform.position))
         {
+            PrevGridLoc = GridLoc;
             OnMoved?.Invoke();
         }
     }

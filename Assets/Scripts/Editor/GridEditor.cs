@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Neo.Grid))]
+[CustomEditor(typeof(Neo.GridComponent))]
 public class GridEditor : Editor
 {
     protected void Awake()
@@ -20,7 +20,7 @@ public class GridEditor : Editor
         EditorGUILayout.Space();
         if( GUILayout.Button("Rebuild") )
         {
-            var grid = target as Neo.Grid;
+            var grid = target as Neo.GridComponent;
             grid.DetermineGridInfo();
         }
     }

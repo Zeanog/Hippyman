@@ -19,33 +19,45 @@ public class PlayerController : AController
         }
     }
 
-    public void Update()
+    protected override void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
-            DesiredDirection = Vector3.forward;
+            nextDirection = Vector3.forward;
+            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
+            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            DesiredDirection = Vector3.back;
+            nextDirection = Vector3.back;
+            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
+            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
-            DesiredDirection = Vector3.right;
+            nextDirection = Vector3.right;
+            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
+            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
-            DesiredDirection = Vector3.left;
+            nextDirection = Vector3.left;
+            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
+            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
         } else
         {
-            //DesiredDirection = Vector3.zero;
+            //nextDirection = Vector3.zero;
+            //Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
+            //DesiredPosition = worldPos;
         }
+
+        base.Update();
     }
 
     public override bool OnOwnerMoved() { return false; }
 
     public override void OnTriggerEnter(Collider other)
-    {         
+    {
     }
 
     public override void OnCollisionEnter(Collision collision)
