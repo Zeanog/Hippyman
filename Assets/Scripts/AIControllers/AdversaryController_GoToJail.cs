@@ -4,7 +4,7 @@ public class AdversaryController_GoToJail : AAdversaryController
 {
     protected override Path PathToTarget()
     {
-        var path = PathTo(Owner.InitialPosition);
+        var path = PathTo(mover.InitialPosition);
         path.OnComplete += () => { 
             path.Invalidate(); 
             stateMachine.TriggerEvent("OnPathComplete"); 

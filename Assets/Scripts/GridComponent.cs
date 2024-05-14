@@ -16,8 +16,8 @@ namespace Neo
         {
             BottomLeft = 0,
             TopLeft = 1,
-            BottomRight = 2,
-            TopRight = 3
+            TopRight = 2,
+            BottomRight = 3
         }
         public Vector2Int[] Corners { get; protected set; }
 
@@ -60,20 +60,21 @@ namespace Neo
             public int   CollisionLayers;
 
             public float Score;
-            //public bool[] NeighborAccessible = new bool[4];
             public int[] NeighborLayer = new int[4];
         }
         protected Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
 
-        //public static readonly Vector3[] Compass = new Vector3[] { Vector3.forward, Vector3.right, Vector3.back, Vector3.left };
         public static readonly Vector2Int[] Compass = new Vector2Int[] { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
 
         protected void Awake()
         {
             LayerMaskWall = LayerMask.GetMask("Wall");
 
-            Corners = new Vector2Int[] { new Vector2Int(0, 1), new Vector2Int(0, NumTiles.y - 2), new Vector2Int(NumTiles.x - 1, 1), new Vector2Int(NumTiles.x - 1, NumTiles.y - 2) };
-
+            Corners = new Vector2Int[4];// { new Vector2Int(0, 1), new Vector2Int(0, NumTiles.y - 2), new Vector2Int(NumTiles.x - 1, 1), new Vector2Int(NumTiles.x - 1, NumTiles.y - 2) };
+            Corners[(int)ECorner.BottomLeft] = new Vector2Int(0, 1);
+            Corners[(int)ECorner.TopLeft] = new Vector2Int(0, NumTiles.y - 2);
+            Corners[(int)ECorner.TopRight] = new Vector2Int(NumTiles.x - 1, NumTiles.y - 2);
+            Corners[(int)ECorner.BottomRight] = new Vector2Int(NumTiles.x - 1, 1);
             Generate();
         }
 
@@ -315,6 +316,16 @@ namespace Neo
             return f >= 0 ? 1 : -1;
         }
 
+        public static bool CloseToGrid(Vector3 pos)
+        {
+            var snappedPos = Neo.GridComponent.SnapToGrid(pos);
+            var deltaPos = snappedPos - pos;
+
+            var dist = deltaPos.magnitude;
+            return dist < 0.001f;
+
+        }
+
         public static Vector3 SnapToGrid(Vector3 pos)
         {
             int iX = (int)(pos.x);
@@ -338,6 +349,7 @@ namespace Neo
                 worldPos = Vector3.zero;
                 return false;
             }
+
             worldPos = new Vector3(referenceCornerPos.x + x * TileDiameter, 0.1f, referenceCornerPos.z + y * TileDiameter);
             return true;
         }

@@ -1,5 +1,6 @@
 ﻿using Neo.StateMachine.Wrappers;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class AAdversaryController : AController
 {
@@ -10,14 +11,30 @@ public abstract class AAdversaryController : AController
     [SerializeField]
     protected InspectorStateMachine stateMachine;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
     }
 
-    public override void OnAssigned()
+    protected Vector3 desiredWorldPos;
+
+    protected override void Update()
     {
-        base.OnAssigned();
+        base.Update();
+
+        if (desiredWorldPos != Vector3.zero && desiredWorldPos != mover.DesiredPosition && CanChangeDirection)
+        {
+            mover.DesiredPosition = desiredWorldPos;
+            desiredWorldPos = Vector3.zero;
+        }
+    }
+
+    public override void OnAssigned(ACharacter character)
+    {
+        base.OnAssigned(character);
+
+        mover.OnChangedGridLoc += OnOwnerMoved;
+        rotator.OnRotationComplete += OnOwnerRotationCompleted;
 
         if (path != null)
         {
@@ -37,6 +54,9 @@ public abstract class AAdversaryController : AController
     {
         base.OnUnassigned();
 
+        mover.OnChangedGridLoc -= OnOwnerMoved;
+        rotator.OnRotationComplete -= OnOwnerRotationCompleted;
+
         Game.Instance.RemoveListener<Game>("OnGameStart", OnGameStart);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnCollected", OnEvidenceCollected);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnLost", OnEvidenceLost);
@@ -44,7 +64,7 @@ public abstract class AAdversaryController : AController
 
         if (path != null)
         {
-            path.Invalidate();
+            path.Destroy();
             path = null;
         }
     }
@@ -69,20 +89,34 @@ public abstract class AAdversaryController : AController
         stateMachine.TriggerEvent("OnEvidenceCollected");
     }
 
-    public override bool OnOwnerMoved()
+    protected void OnOwnerRotationCompleted()
+    {
+        if(mover.IsAtDestination)
+        {
+            if (path != null && path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
+            {
+                rotator.DesiredDirection = nextDir;
+                desiredWorldPos = nextPos;
+            }
+        }
+    }
+
+    protected void OnOwnerMoved()
     {
         if (!Player.gameObject.activeInHierarchy)
         {
-            nextDirection = Vector3.zero;
-            return true;
+            //rotator.DesiredDirection = Vector3.zero;
+            desiredWorldPos = Vector3.zero;
+            return;
         }
 
-        if (path != null && path.IsComplete(Owner.transform.position) && path.IsValid)
-        {
-            path.Invalidate();
-            nextDirection = Vector3.zero;
-            return true;
-        }
+        //if (path != null && path.IsComplete(mover.transform.position) && path.IsValid)
+        //{
+        //    path.Invalidate();
+        //    //rotator.DesiredDirection = Vector3.zero;
+        //    desiredWorldPos = Vector3.zero;
+        //    return;
+        //}
 
         if (path == null || !path.IsValid)
         {
@@ -90,73 +124,67 @@ public abstract class AAdversaryController : AController
         }
         else
         {
-            bool success = path.DetermineNextDirection(Owner.GridLoc, out Vector3 nextDir);
-            nextDirection = success ? nextDir : Vector3.zero;
+            if (path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
+            {
+                rotator.DesiredDirection = nextDir;
+                desiredWorldPos = nextPos;
+            }
         }
-
-        return true;
     }
 
     protected virtual bool FindNewPath()
     {
-        if (path != null)
+        if (path != null && path.IsValid)
         {
-            path.Invalidate();
+            path.Destroy();
         }
 
+        if(owner == null)
+        {
+            return false;
+        }
+
+        Debug.LogFormat("Creating new path for {0}", owner.name);
         path = PathToTarget();
         if (path == null)
         {
             return false;
         }
 
-        nextDirection = path.DetermineFirstDirection(out Vector3 startPos);
+        rotator.DesiredDirection = path.DetermineFirstDirection(out Vector3 startPos);
+        if(desiredWorldPos.Equals(startPos))
+        {
+            path.DetermineNextDirection(mover.GridLoc, out startPos, out Vector3 desDir);
+            rotator.DesiredDirection = desDir;
+        }
+        desiredWorldPos = startPos;
         return true;
     }
 
     protected Path PathTo( GameObject go )
     {
-        return Game.Instance.FindIfPathExists(Owner.transform.position, go.transform.position);
+        return Game.Instance.FindIfPathExists(mover.transform.position, go.transform.position);
     }
 
     protected Path PathTo(MonoBehaviour mb)
     {
-        return Game.Instance.FindIfPathExists(Owner.transform.position, mb.transform.position);
+        return Game.Instance.FindIfPathExists(mover.transform.position, mb.transform.position);
     }
 
     protected Path PathTo(Vector3 pos)
     {
-        return Game.Instance.FindIfPathExists(Owner.transform.position, pos);
+        return Game.Instance.FindIfPathExists(mover.transform.position, pos);
     }
 
     protected Path PathTo(Vector2Int loc)
     {
-        return Game.Instance.FindIfPathExists(Owner.GridLoc, loc);
+        return Game.Instance.FindIfPathExists(mover.GridLoc, loc);
     }
 
     protected abstract Path PathToTarget();
-
-    public override float DetermineStepLength()
-    {
-        float stepLength = base.DetermineStepLength();
-
-        if (path == null || path.IsComplete())
-        {
-            return stepLength;
-        }
-        if (!path.FindNode(Owner.GridLoc, out Path.Node node))
-        {
-            return 0f;
-        }
-
-        Game.Instance.GridToWorld(node.GridLocation, out Vector3 worldPos);
-        var deltaPos = worldPos - Owner.transform.position;
-
-        return Mathf.Min(stepLength, deltaPos.magnitude);
-    }
 }
 
-public abstract class AAdversaryController_Vulnerable : AAdversaryController {
+public abstract class AAdversaryController_Invulnerable : AAdversaryController {
     public override void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<Player>() != null)

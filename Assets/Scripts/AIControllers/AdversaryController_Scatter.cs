@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class AdversaryController_Scatter : AAdversaryController_Vulnerable
+public class AdversaryController_Scatter : AAdversaryController_Invulnerable
 {
     [SerializeField]
     protected Neo.GridComponent.ECorner TargetCorner;

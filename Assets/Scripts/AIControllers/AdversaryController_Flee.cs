@@ -9,6 +9,13 @@ public class AdversaryController_Flee : AAdversaryController
 
     protected int currentCornerIndex = 0;
     protected int incrementAmount = 0;
+
+    public override void OnAssigned(ACharacter character)
+    {
+        currentCornerIndex = Random.Range(0, Game.Instance.Grid.Corners.Length);
+        base.OnAssigned(character);
+    }
+
     protected override Path PathToTarget()
     {
         incrementAmount = ((incrementAmount + 1) % 2);
@@ -17,14 +24,13 @@ public class AdversaryController_Flee : AAdversaryController
         
         Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos);
         var newPath = PathTo(targetPos);
-        if(newPath == null)
-        {
-            return null;
-        }
+        newPath.OnInvalidation += () => {
+            int sdf = 4; 
+        };
 
         newPath.OnComplete += () =>
         {
-            path.Invalidate();
+            newPath.Invalidate();
             stateMachine.TriggerEvent("OnPathComplete");
             FindNewPath();
         };

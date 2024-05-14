@@ -38,22 +38,21 @@ public class Path
     protected LinkedListNode<Node> currentNode;
 
     public event Action OnComplete;
+    public event Action OnInvalidation;
 
     protected bool isValid = false;
     public bool IsValid {
         get => isValid;
-        set {
+        protected set {
             if(isValid == value)
             {
                 return;
             }
 
             isValid = value;
-            Game.Instance.Player.OnMoved -= Invalidate;
             DestroyVisualizations();
             if (isValid)
             {
-                Game.Instance.Player.OnMoved += Invalidate;
                 Game.Instance.CreateVisualizationsFor(this);
             }
         }
@@ -73,6 +72,13 @@ public class Path
     }
 
     public   void Invalidate()
+    {
+        IsValid = false;
+        OnInvalidation?.Invoke();
+        OnInvalidation = null;
+    }
+
+    public void Destroy()
     {
         IsValid = false;
     }
@@ -112,7 +118,6 @@ public class Path
         return node != null;
     }
 
-    //TODO: Tell Owner to move to fist node's position.  Then we can start along the path
     public Vector3 Start()
     {
         currentNode = Nodes.First;
@@ -147,7 +152,7 @@ public class Path
         }
     }
 
-    public bool DetermineNextDirection(out Vector3 dir)
+    public bool DetermineNextDirection(out Vector3 nextPos, out Vector3 dir)
     {
         Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 fromPos);
 
@@ -155,22 +160,25 @@ public class Path
         if (currentNode == null)
         {
             dir = Vector3.zero;
+            nextPos = Vector3.zero;
             OnComplete?.Invoke();
             return false;
         }
 
         Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 toPos);
-        
+
 
         dir = Vector3.Normalize(toPos - fromPos);
+        nextPos = toPos;
         return true;
     }
 
-    public bool  DetermineNextDirection( Vector2Int from, out Vector3 dir )
+    public bool  DetermineNextDirection( Vector2Int from, out Vector3 nextPos, out Vector3 dir )
     {
         if(!FindNextNode(from, out currentNode))
         {
             dir = Vector3.zero;
+            nextPos = Vector3.zero;
             OnComplete?.Invoke();
             return false;
         }
@@ -179,6 +187,7 @@ public class Path
         Game.Instance.GridToWorld(from, out Vector3 fromPos);
 
         dir = Vector3.Normalize(toPos - fromPos);
+        nextPos = toPos;
         return true;
     }
 
@@ -195,12 +204,6 @@ public class Path
     protected List<GameObject> pathVisualizedGOs = new List<GameObject>();
     public void DestroyVisualizations()
     {
-        //if(pathVisualizedGOs.Count > 0)
-        //{
-        //    GameObject go = pathVisualizedGOs[0];
-        //    pathVisualizedGOs.Clear();
-        //    GameObject.DestroyImmediate(go);
-        //}
         for( int ix = pathVisualizedGOs.Count - 1; ix >= 0; --ix)
         {
             GameObject.Destroy(pathVisualizedGOs[ix]);

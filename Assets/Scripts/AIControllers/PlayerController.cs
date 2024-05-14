@@ -3,58 +3,43 @@
 public class PlayerController : AController
 {
     protected Vector3 desiredDirection = Vector3.zero;
-    public override Vector3 DesiredDirection {
-        get => desiredDirection;
-        protected set {
-            if(desiredDirection.Equals(value))
-            {
-                return;
-            }
-
-            desiredDirection = value;
-            if(desiredDirection != Vector3.zero)
-            {
-                Owner.Animator.SetTrigger("StartWalking");
-            }
-        }
-    }
 
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
-            nextDirection = Vector3.forward;
-            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
-            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
+            desiredDirection = Vector3.forward;
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
-            nextDirection = Vector3.back;
-            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
-            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
+            desiredDirection = Vector3.back;
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            nextDirection = Vector3.right;
-            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
-            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
+            desiredDirection = Vector3.right;
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            nextDirection = Vector3.left;
-            Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
-            DesiredPosition = worldPos + DesiredDirection * Neo.GridComponent.TileDiameter;
+            desiredDirection = Vector3.left;
         } else
         {
-            //nextDirection = Vector3.zero;
-            //Game.Instance.GridToWorld(Owner.GridLoc, out Vector3 worldPos);
-            //DesiredPosition = worldPos;
+            desiredDirection = Vector3.zero;
         }
 
         base.Update();
-    }
 
-    public override bool OnOwnerMoved() { return false; }
+        var nextLoc = new Vector2Int( mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z );
+        if ( desiredDirection != Vector3.zero && !Game.Instance.Grid.TileIsObstructed(nextLoc))
+        {
+            rotator.DesiredDirection = desiredDirection;
+            if (CanChangeDirection)
+            {
+                Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
+                mover.DesiredPosition = desiredWorldPos;
+                desiredDirection = Vector3.zero;
+            }
+        }
+    }
 
     public override void OnTriggerEnter(Collider other)
     {

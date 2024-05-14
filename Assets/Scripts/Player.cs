@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Player : ControlledAnimatedObject
+public class Player : ACharacter
 {
     [SerializeField]
     protected PlayerController playerController;
