@@ -6,17 +6,17 @@ public abstract class AAdversaryController : AController
 {
     protected Path path;
 
-    public Player Player { get => Game.Instance.Player; }
+    public Player Player => Game.Instance.Player;
 
     [SerializeField]
     protected InspectorStateMachine stateMachine;
+
+    protected Vector3 desiredWorldPos;
 
     protected override void Start()
     {
         base.Start();
     }
-
-    protected Vector3 desiredWorldPos;
 
     protected override void Update()
     {
@@ -110,14 +110,6 @@ public abstract class AAdversaryController : AController
             return;
         }
 
-        //if (path != null && path.IsComplete(mover.transform.position) && path.IsValid)
-        //{
-        //    path.Invalidate();
-        //    //rotator.DesiredDirection = Vector3.zero;
-        //    desiredWorldPos = Vector3.zero;
-        //    return;
-        //}
-
         if (path == null || !path.IsValid)
         {
             FindNewPath();
@@ -144,6 +136,7 @@ public abstract class AAdversaryController : AController
             return false;
         }
 
+        mover.DesiredPosition = owner.transform.position;// Stop us.
         Debug.LogFormat("Creating new path for {0}", owner.name);
         path = PathToTarget();
         if (path == null)
@@ -187,11 +180,13 @@ public abstract class AAdversaryController : AController
 public abstract class AAdversaryController_Invulnerable : AAdversaryController {
     public override void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Player>() != null)
+        var player = other.gameObject.GetComponent<Player>();
+        if (player != null)
         {
             // We caught the player
             other.gameObject.SetActive(false);
             stateMachine.TriggerEvent("OnTouchedPlayer");
+            //player.Controller.
         }
     }
 

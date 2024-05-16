@@ -9,14 +9,18 @@ public abstract class ACharacter : AAnimatorEventHander
 {
     //[SerializeField]
     protected MovementController mover;
+    //[SerializeField]
+    protected RotationController rotator;
+
+    public float LinearSpeed {
+        get => mover.LinearSpeed;
+        set => mover.LinearSpeed = value;
+    }
 
     public Action OnChangedGridLoc { get => mover.OnChangedGridLoc; set => mover.OnChangedGridLoc = value; }
     public Action OnRotationComplete { get => rotator.OnRotationComplete; set => rotator.OnRotationComplete = value; }
 
-    //[SerializeField]
-    protected RotationController rotator;
-
-    protected AController controller;
+    public AController Controller { get; protected set; }
 
     protected override void Awake()
     {
@@ -28,20 +32,30 @@ public abstract class ACharacter : AAnimatorEventHander
 
     public void SetController(AController c)
     {
-        if (controller != null)
+        if (Controller != null)
         {
             mover.Controller = null;
-            controller.OnUnassigned();
+            Controller.OnUnassigned();
         }
 
-        controller = c;
+        Controller = c;
 
-        if (controller != null)
+        if (Controller != null)
         {
-            Debug.LogFormat("Setting {0} on {1}...", controller.GetType().Name, name);
-            mover.Controller = controller;
-            controller.OnAssigned(this);
+            Debug.LogFormat("Setting {0} on {1}...", Controller.GetType().Name, name);
+            mover.Controller = Controller;
+            Controller.OnAssigned(this);
         }
+    }
+
+    protected virtual void OnTriggerEnter(Collider other)
+    {
+        Controller?.OnTriggerEnter(other);
+    }
+
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        Controller?.OnCollisionEnter(collision);
     }
 }
 

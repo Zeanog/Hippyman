@@ -18,12 +18,13 @@ public class AdversaryController_Flee : AAdversaryController
 
     protected override Path PathToTarget()
     {
-        incrementAmount = ((incrementAmount + 1) % 2);
-        var corners = Game.Instance.Grid.Corners;
-        var cornerIndex = (currentCornerIndex + incrementAmount + 1) % corners.Length;
-        
-        Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos);
-        var newPath = PathTo(targetPos);
+        //incrementAmount = ((incrementAmount + 1) % 2);
+        //var corners = Game.Instance.Grid.Corners;
+        //var cornerIndex = (currentCornerIndex + incrementAmount + 1) % corners.Length;
+
+        //Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos);
+        //var newPath = PathTo(targetPos);
+        var newPath = PathTo(Player);
         newPath.OnInvalidation += () => {
             int sdf = 4; 
         };

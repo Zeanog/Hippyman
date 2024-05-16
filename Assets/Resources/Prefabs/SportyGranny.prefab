@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbdce928bc5d74d428a285d1b8509bc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linearSpeed: 1
+  LinearSpeed: 0
   Controller: {fileID: 0}
   GridLoc: {x: 0, y: 0}
   PrevGridLoc: {x: 0, y: 0}
@@ -1197,11 +1197,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Behavior
-      objectReference: {fileID: 0}
-    - target: {fileID: 5548221085810076641, guid: f6968c1735f25a649ab0b4ec252a71ce,
-        type: 3}
-      propertyPath: m_Layer
-      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6766874931898860959, guid: f6968c1735f25a649ab0b4ec252a71ce,
         type: 3}

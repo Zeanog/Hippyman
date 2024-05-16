@@ -3,9 +3,8 @@ using System;
 
 public class MovementController : MonoBehaviour
 {
-    [SerializeField]
-    protected float                 linearSpeed = 1f; // in meters per second
-    public float                    LinearSpeed => linearSpeed;
+    [HideInInspector]
+    public float                    LinearSpeed;
 
     [HideInInspector]
     public AController              Controller;
@@ -78,7 +77,7 @@ public class MovementController : MonoBehaviour
         var dirToDesiredPos = delta / deltaDist;
         stepLength = Mathf.Min(stepLength, deltaDist);
 
-        IsAtDestination = stepLength < 0.02f || desiredDirection == Vector3.zero || Vector3.Dot(dirToDesiredPos, desiredDirection) <= 0f;
+        IsAtDestination = stepLength < (LinearSpeed * 0.007f) || desiredDirection == Vector3.zero || Vector3.Dot(dirToDesiredPos, desiredDirection) <= 0f;
         
         if (IsAtDestination)
         {
