@@ -136,7 +136,7 @@ public abstract class AAdversaryController : AController
             return false;
         }
 
-        mover.DesiredPosition = owner.transform.position;// Stop us.
+        mover.Stop(true);
         Debug.LogFormat("Creating new path for {0}", owner.name);
         path = PathToTarget();
         if (path == null)

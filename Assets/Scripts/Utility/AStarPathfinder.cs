@@ -53,7 +53,10 @@ public class Path
             DestroyVisualizations();
             if (isValid)
             {
-                Game.Instance.CreateVisualizationsFor(this);
+                if (Debug.isDebugBuild)
+                {
+                    Game.Instance.CreateVisualizationsFor(this);
+                }
             }
         }
     }

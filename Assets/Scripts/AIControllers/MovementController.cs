@@ -92,4 +92,15 @@ public class MovementController : MonoBehaviour
         }
         Game.Instance.WorldToGrid(transform.position, out GridLoc);
     }
+
+    public virtual void Stop(bool snap = false)
+    {
+        if(snap) {
+            transform.position = DesiredPosition;
+        }
+        else
+        {
+            DesiredPosition = transform.position;
+        }
+    }
 }

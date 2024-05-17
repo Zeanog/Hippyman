@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : AController
 {
@@ -6,38 +7,45 @@ public class PlayerController : AController
 
     protected override void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
-        {
-            desiredDirection = Vector3.forward;
-        }
-        else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-        {
-            desiredDirection = Vector3.back;
-        }
-        else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-        {
-            desiredDirection = Vector3.right;
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-        {
-            desiredDirection = Vector3.left;
-        } else
-        {
-            desiredDirection = Vector3.zero;
-        }
-
         base.Update();
 
-        var nextLoc = new Vector2Int( mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z );
-        if ( desiredDirection != Vector3.zero && !Game.Instance.Grid.TileIsObstructed(nextLoc))
+        if (desiredDirection != Vector3.zero)
         {
-            rotator.DesiredDirection = desiredDirection;
-            if (CanChangeDirection)
+            Vector2Int nextLoc = new Vector2Int(mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z);
+            if (!Game.Instance.Grid.TileIsObstructed(nextLoc))
             {
-                Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
-                mover.DesiredPosition = desiredWorldPos;
-                desiredDirection = Vector3.zero;
+                rotator.DesiredDirection = desiredDirection;
+                if (CanChangeDirection)
+                {
+                    Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
+                    mover.DesiredPosition = desiredWorldPos;
+                    //desiredDirection = Vector3.zero;
+                }
             }
+        }
+    }
+
+    protected void OnMove(InputValue input)
+    {
+        var dir = input.Get<Vector2>();
+
+        var nextDir = Mathf.Abs(dir.x) > Mathf.Abs(dir.y) ? new Vector3(dir.x, 0f, 0f).normalized : new Vector3(0f, 0f, dir.y).normalized;
+        if (nextDir != Vector3.zero)
+        {
+            desiredDirection = nextDir;
+
+            Vector2Int nextLoc = new Vector2Int(mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z);
+            if(!Game.Instance.Grid.TileIsObstructed(nextLoc))
+            {
+                rotator.DesiredDirection = desiredDirection;
+                if (CanChangeDirection)
+                {
+                    Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
+                    mover.DesiredPosition = desiredWorldPos;
+                    //desiredDirection = Vector3.zero;
+                }
+            }
+            
         }
     }
 
