@@ -44,7 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f04039b2ca01e74d889169cbb94d0ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  mover: {fileID: 0}
+  rotator: {fileID: 0}
+  linearSpeed: 0
   stateMachine: {fileID: 0}
 --- !u!1 &3018392446328890746
 GameObject:
@@ -90,7 +92,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63c7b920a90578543abbaebe111bb0ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  mover: {fileID: 0}
+  rotator: {fileID: 0}
+  linearSpeed: 2.9
   stateMachine: {fileID: 0}
 --- !u!1 &3738764322423125574
 GameObject:
@@ -172,7 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe6dc69aac6b2047a8c4afe6b0b8562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  mover: {fileID: 0}
+  rotator: {fileID: 0}
+  linearSpeed: 3
   stateMachine: {fileID: 0}
 --- !u!1 &6953690883715009902
 GameObject:
@@ -218,9 +224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6169cfc3f87213408576439e437aaeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  mover: {fileID: 0}
+  rotator: {fileID: 0}
+  linearSpeed: 3
   stateMachine: {fileID: 0}
-  TargetCorner: 1
+  TargetCorner: 0
 --- !u!1 &7910854107192896970
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,5 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37a423db80c63e4293eb998e63faff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  mover: {fileID: 0}
+  rotator: {fileID: 0}
+  linearSpeed: 3.1
   stateMachine: {fileID: 0}
