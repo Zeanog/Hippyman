@@ -77,6 +77,11 @@ public class MovementController : MonoBehaviour
         var dirToDesiredPos = delta / deltaDist;
         stepLength = Mathf.Min(stepLength, deltaDist);
 
+        //(LinearSpeed * 0.007f)
+        //LinearSpeed = 1 -> 0.007
+        //LinearSpeed = 2 -> 0.014
+        //LinearSpeed = 3 -> 0.021
+        //We scale our min step length based on speed
         IsAtDestination = stepLength < (LinearSpeed * 0.007f) || desiredDirection == Vector3.zero || Vector3.Dot(dirToDesiredPos, desiredDirection) <= 0f;
         
         if (IsAtDestination)

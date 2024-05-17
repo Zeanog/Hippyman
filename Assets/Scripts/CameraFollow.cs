@@ -3,23 +3,23 @@
 public class CameraFollow : MonoBehaviour
 {
     [SerializeField]
-    protected Transform m_FollowTarget;
+    protected Transform followTarget;
     
     [SerializeField]
-    protected float m_Speed;
+    protected float speed;
 
-    protected Vector3 m_Offset;
+    protected Vector3 offset;
     
     protected void Awake()
     {
-        m_Offset = transform.position - m_FollowTarget.position;
+        offset = transform.position -followTarget.position;
     }
 
     protected void Update()
     {
-        var prejectedPos = m_FollowTarget.position + m_Offset;
+        var prejectedPos = followTarget.position + offset;
         var delta = prejectedPos - transform.position;
 
-        transform.position += delta * m_Speed * Time.deltaTime;
+        transform.position += delta * speed * Time.deltaTime;
     }
 }
