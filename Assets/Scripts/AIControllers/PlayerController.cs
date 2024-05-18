@@ -5,6 +5,23 @@ public class PlayerController : AController
 {
     protected Vector3 desiredDirection = Vector3.zero;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        Game.Instance.AddListener<Adversary>("OnTouchedPlayer", OnTouched);
+    }
+
+    //protected void OnDisable()
+    //{
+    //    Game.Instance.RemoveListener<Adversary>("OnTouchedPlayer", OnTouched);
+    //}
+
+    protected void  OnTouched( object sender, object evtData )
+    {
+        gameObject.SetActive(false);
+        Game.Instance.BroadcastEvent<Game>(this, "OnGameOver", null);//Touched by agressive adversary
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -44,8 +61,7 @@ public class PlayerController : AController
                     mover.DesiredPosition = desiredWorldPos;
                     //desiredDirection = Vector3.zero;
                 }
-            }
-            
+            } 
         }
     }
 

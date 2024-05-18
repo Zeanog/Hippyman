@@ -35,7 +35,13 @@ namespace Neo.StateMachine {
         private static void    OnCreateTransition() {
             Create<InspectorTransition>();
         }
-    
+
+        [MenuItem("GameObject/Neo/Create/InspectorTransitionProxy #&t")]
+        private static void OnCreateTransitionProxy()
+        {
+            Create<InspectorTransitionProxy>();
+        }
+
         [MenuItem("GameObject/Neo/Create/InspectorStateMachine  #&m")]
         private static void    OnCreateStateMachine() {
             Create<InspectorStateMachine>();

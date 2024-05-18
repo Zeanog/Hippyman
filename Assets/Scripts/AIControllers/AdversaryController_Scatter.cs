@@ -10,7 +10,6 @@ public class AdversaryController_Scatter : AAdversaryController_Invulnerable
         var newPath = PathTo(Game.Instance.Grid.Corners[(int)TargetCorner]);
         newPath.OnComplete += () =>
         {
-            path.Invalidate();
             stateMachine.TriggerEvent("OnPathComplete");
         };
         return newPath;

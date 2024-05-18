@@ -88,9 +88,6 @@ public class Game : EventManager
     [SerializeField]
     protected ScoreNotificationUnityEvent ScoreChanged;
 
-    [SerializeField]
-    protected UnityEvent              LevelComplete;
-
     public int LayerMaskWall => grid.LayerMaskWall;
 
     protected override void Awake()
@@ -111,12 +108,9 @@ public class Game : EventManager
 
         AddListener<Game>("OnGameStart", OnGameStart);
         AddListener<Game>("OnGamePause", OnGamePause);
+        AddListener<Game>("OnGameOver", OnGameOver);
 
         pathFinder = new AStarPathfinder(grid);
-
-        LevelComplete.AddListener( () => {
-            stateMachine.TriggerEvent("OnLevelComplete");
-        } );
     }
 
     protected virtual void Start()
@@ -140,6 +134,14 @@ public class Game : EventManager
             }
         });
         startTimer.Restart();
+    }
+
+    protected void OnDestroy()
+    {
+        if(instance == this)
+        {
+            instance = null;
+        }
     }
 
     public void CreateVisualizationsFor(Path path)
@@ -166,14 +168,18 @@ public class Game : EventManager
         BroadcastEvent(this, evtName, null);
     }
 
-    protected void OnGamePause(object sender, object evtData)
+    protected void OnGameOver(object sender, object evtData)
     {
-        foreach (var adv in advisories)
-        {
-            //adv.SetSleeping();
-        }
+        stateMachine.TriggerEvent("OnGameOver");
+        RemoveListener<Pellet>("OnCollected", OnPelletCollected);
     }
 
+    protected void OnGamePause(object sender, object evtData)
+    {
+        stateMachine.TriggerEvent("OnGamePause");
+    }
+
+    //Called from StateMachine
     public void StartGame()
     {
         BroadcastEvent<Game>(this, "OnGameStart", null);
@@ -181,10 +187,7 @@ public class Game : EventManager
 
     protected void OnGameStart(object sender, object evtData)
     {
-        foreach(var adv in advisories)
-        {
-            //adv.SetAggressive();
-        }
+        stateMachine.TriggerEvent("OnGameStart", false);
     }
 
     protected void OnEvidenceCollected(object sender, object evtData)
@@ -221,8 +224,7 @@ public class Game : EventManager
 
         if(Pellet.NumPellets <= 0)
         {
-            LevelComplete?.Invoke();
-            RemoveListener<Pellet>("OnCollected", OnPelletCollected);
+            BroadcastEvent<Game>(this, "OnGameOver", null);
         }
     }
 

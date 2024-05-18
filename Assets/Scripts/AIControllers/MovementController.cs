@@ -82,7 +82,7 @@ public class MovementController : MonoBehaviour
         //LinearSpeed = 2 -> 0.014
         //LinearSpeed = 3 -> 0.021
         //We scale our min step length based on speed
-        IsAtDestination = stepLength < (LinearSpeed * 0.007f) || desiredDirection == Vector3.zero || Vector3.Dot(dirToDesiredPos, desiredDirection) <= 0f;
+        IsAtDestination = stepLength < (LinearSpeed * 0.007f) || desiredDirection == Vector3.zero || Vector3.Dot(dirToDesiredPos, desiredDirection) <= 0.1f;
         
         if (IsAtDestination)
         {
@@ -93,7 +93,7 @@ public class MovementController : MonoBehaviour
             }
         } else
         {
-            transform.position += desiredDirection * stepLength;    
+            transform.position += desiredDirection * stepLength;
         }
         Game.Instance.WorldToGrid(transform.position, out GridLoc);
     }

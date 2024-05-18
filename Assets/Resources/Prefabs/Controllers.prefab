@@ -48,6 +48,9 @@ MonoBehaviour:
   rotator: {fileID: 0}
   linearSpeed: 0
   stateMachine: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &3018392446328890746
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,6 +99,9 @@ MonoBehaviour:
   rotator: {fileID: 0}
   linearSpeed: 2.9
   stateMachine: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &3738764322423125574
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,6 +186,9 @@ MonoBehaviour:
   rotator: {fileID: 0}
   linearSpeed: 3
   stateMachine: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &6953690883715009902
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +237,9 @@ MonoBehaviour:
   rotator: {fileID: 0}
   linearSpeed: 3
   stateMachine: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 128
   TargetCorner: 0
 --- !u!1 &7910854107192896970
 GameObject:
@@ -277,3 +289,6 @@ MonoBehaviour:
   rotator: {fileID: 0}
   linearSpeed: 3.1
   stateMachine: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 128

@@ -6,7 +6,6 @@ public class AdversaryController_GoToJail : AAdversaryController
     {
         var path = PathTo(mover.InitialPosition);
         path.OnComplete += () => { 
-            path.Invalidate(); 
             stateMachine.TriggerEvent("OnPathComplete"); 
         };
         return path;

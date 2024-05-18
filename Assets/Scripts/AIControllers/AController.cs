@@ -9,10 +9,10 @@ public abstract class AController : MonoBehaviour
     [SerializeField]
     protected RotationController rotator;
 
-    protected ACharacter    owner;
-
     [SerializeField]
-    protected float         linearSpeed = 1f; // in meters per second
+    protected float linearSpeed = 1f; // in meters per second
+
+    protected ACharacter    owner;
 
     protected virtual void Awake()
     {

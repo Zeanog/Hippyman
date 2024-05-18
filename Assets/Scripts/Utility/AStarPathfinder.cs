@@ -76,14 +76,17 @@ public class Path
 
     public   void Invalidate()
     {
+        if(!IsValid) { return; }
+
         IsValid = false;
+
         OnInvalidation?.Invoke();
         OnInvalidation = null;
     }
 
     public void Destroy()
     {
-        IsValid = false;
+        Invalidate();
     }
 
     public  bool    FindNode( Vector2Int loc, out Node node )
@@ -164,12 +167,12 @@ public class Path
         {
             dir = Vector3.zero;
             nextPos = Vector3.zero;
+            Invalidate();
             OnComplete?.Invoke();
             return false;
         }
 
         Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 toPos);
-
 
         dir = Vector3.Normalize(toPos - fromPos);
         nextPos = toPos;
@@ -182,6 +185,7 @@ public class Path
         {
             dir = Vector3.zero;
             nextPos = Vector3.zero;
+            Invalidate();
             OnComplete?.Invoke();
             return false;
         }

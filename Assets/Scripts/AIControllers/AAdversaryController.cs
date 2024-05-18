@@ -4,14 +4,31 @@ using UnityEngine.UIElements;
 
 public abstract class AAdversaryController : AController
 {
-    protected Path path;
+    private Path path;
+    public Path Path {
+        get => path;
+
+        protected set {
+            path = value;
+        }
+    }
 
     public Player Player => Game.Instance.Player;
 
     [SerializeField]
     protected InspectorStateMachine stateMachine;
 
+    [SerializeField]
+    protected LayerMask layer;
+    protected int prevLayer;
+
     protected Vector3 desiredWorldPos;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        layer = LayerMask.GetMask("Monsters");
+    }
 
     protected override void Start()
     {
@@ -33,16 +50,14 @@ public abstract class AAdversaryController : AController
     {
         base.OnAssigned(character);
 
+        prevLayer = owner.gameObject.layer;
+        owner.gameObject.layer = (int)Mathf.Log(layer.value, 2f);
+
         mover.OnChangedGridLoc += OnOwnerMoved;
         rotator.OnRotationComplete += OnOwnerRotationCompleted;
 
-        if (path != null)
-        {
-            path.Invalidate();
-            path = null;
-        }
-
         Game.Instance.AddListener<Game>("OnGameStart", OnGameStart);
+        Game.Instance.AddListener<Game>("OnGameOver", OnGameOver);
         Game.Instance.AddListener<EvidenceofCorruption>("OnCollected", OnEvidenceCollected);
         Game.Instance.AddListener<EvidenceofCorruption>("OnLost", OnEvidenceLost);
         Game.Instance.AddListener<Adversary>("OnGoToJail", OnGoToJail);
@@ -52,26 +67,34 @@ public abstract class AAdversaryController : AController
 
     public override void OnUnassigned()
     {
+        owner.gameObject.layer = prevLayer;
+
         base.OnUnassigned();
 
         mover.OnChangedGridLoc -= OnOwnerMoved;
         rotator.OnRotationComplete -= OnOwnerRotationCompleted;
 
+        if (Path != null)
+        {
+            Path.Destroy();
+            Path = null;
+        }
+
         Game.Instance.RemoveListener<Game>("OnGameStart", OnGameStart);
+        Game.Instance.RemoveListener<Game>("OnGameOver", OnGameOver);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnCollected", OnEvidenceCollected);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnLost", OnEvidenceLost);
         Game.Instance.RemoveListener<Adversary>("OnGoToJail", OnGoToJail);
-
-        if (path != null)
-        {
-            path.Destroy();
-            path = null;
-        }
     }
 
     protected virtual void OnGameStart(object sender, object evtData)
     {
         stateMachine.TriggerEvent("OnGameStart");
+    }
+
+    protected virtual void OnGameOver(object sender, object evtData)
+    {
+        stateMachine.TriggerEvent("OnGameOver", false);
     }
 
     protected virtual void OnGoToJail(object sender, object evtData)
@@ -93,7 +116,7 @@ public abstract class AAdversaryController : AController
     {
         if(mover.IsAtDestination)
         {
-            if (path != null && path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
+            if (Path != null && Path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
             {
                 rotator.DesiredDirection = nextDir;
                 desiredWorldPos = nextPos;
@@ -110,13 +133,13 @@ public abstract class AAdversaryController : AController
             return;
         }
 
-        if (path == null || !path.IsValid)
+        if (Path == null || !Path.IsValid)
         {
             FindNewPath();
         }
         else
         {
-            if (path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
+            if (Path.DetermineNextDirection(mover.GridLoc, out Vector3 nextPos, out Vector3 nextDir))
             {
                 rotator.DesiredDirection = nextDir;
                 desiredWorldPos = nextPos;
@@ -126,28 +149,34 @@ public abstract class AAdversaryController : AController
 
     protected virtual bool FindNewPath()
     {
-        if (path != null && path.IsValid)
-        {
-            path.Destroy();
-        }
-
         if(owner == null)
         {
             return false;
         }
 
-        mover.Stop(true);
-        Debug.LogFormat("Creating new path for {0}", owner.name);
-        path = PathToTarget();
-        if (path == null)
+        if(Path != null)
+        {
+            Path.Invalidate();
+            Path = null;
+        }
+
+        //mover.Stop();
+        Debug.LogFormat("{0} is creating new path for {1}", GetType().Name, owner.name);
+        var newPath = PathToTarget();
+        if (Path != null)
+        {
+            path.Destroy();
+        }
+        Path = newPath;
+        if (Path == null)
         {
             return false;
         }
 
-        rotator.DesiredDirection = path.DetermineFirstDirection(out Vector3 startPos);
+        rotator.DesiredDirection = Path.DetermineFirstDirection(out Vector3 startPos);
         if(desiredWorldPos.Equals(startPos))
         {
-            path.DetermineNextDirection(mover.GridLoc, out startPos, out Vector3 desDir);
+            Path.DetermineNextDirection(mover.GridLoc, out startPos, out Vector3 desDir);
             rotator.DesiredDirection = desDir;
         }
         desiredWorldPos = startPos;
@@ -183,10 +212,8 @@ public abstract class AAdversaryController_Invulnerable : AAdversaryController {
         var player = other.gameObject.GetComponent<Player>();
         if (player != null)
         {
-            // We caught the player
-            other.gameObject.SetActive(false);
             stateMachine.TriggerEvent("OnTouchedPlayer");
-            //player.Controller.
+            Game.Instance.BroadcastEvent<Adversary>(this, "OnTouchedPlayer", null);
         }
     }
 
@@ -195,9 +222,8 @@ public abstract class AAdversaryController_Invulnerable : AAdversaryController {
         var collidee = collision.gameObject.GetComponent<Player>();
         if (collidee != null)
         {
-            // We caught the player
-            collidee.gameObject.SetActive(false);
             stateMachine.TriggerEvent("OnTouchedPlayer");
+            Game.Instance.BroadcastEvent<Adversary>(this, "OnTouchedPlayer", null);
         }
     }
 }
