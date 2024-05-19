@@ -44,12 +44,23 @@ public class PlayerController : AController
 
     protected void OnMove(InputValue input)
     {
-        var dir = input.Get<Vector2>();
+        OnMove(input.Get<Vector2>());
+    }
 
+    public void OnMove(string encodedDir)
+    {
+        var parts = encodedDir.Split(',');
+        OnMove(new Vector2(float.Parse(parts[0].Trim()), float.Parse(parts[1].Trim())));
+    }
+
+    public void OnMove(Vector2 dir)
+    {
         var nextDir = Mathf.Abs(dir.x) > Mathf.Abs(dir.y) ? new Vector3(dir.x, 0f, 0f).normalized : new Vector3(0f, 0f, dir.y).normalized;
         if (nextDir != Vector3.zero)
         {
             desiredDirection = nextDir;
+
+            Debug.LogFormat("OnMove: {0}", dir);
 
             Vector2Int nextLoc = new Vector2Int(mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z);
             if(!Game.Instance.Grid.TileIsObstructed(nextLoc))
