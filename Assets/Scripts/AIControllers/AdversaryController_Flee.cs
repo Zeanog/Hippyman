@@ -24,9 +24,6 @@ public class AdversaryController_Flee : AAdversaryController
 
         Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos);
         var newPath = PathTo(targetPos);
-        if(newPath == null) {
-            int sdf = 4;
-        }
         newPath.OnComplete += () =>
         {
             stateMachine.TriggerEvent("OnPathComplete");

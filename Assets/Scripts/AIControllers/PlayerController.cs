@@ -55,24 +55,26 @@ public class PlayerController : AController
 
     public void OnMove(Vector2 dir)
     {
-        var nextDir = Mathf.Abs(dir.x) > Mathf.Abs(dir.y) ? new Vector3(dir.x, 0f, 0f).normalized : new Vector3(0f, 0f, dir.y).normalized;
-        if (nextDir != Vector3.zero)
+        if (dir == Vector2.zero)
         {
-            desiredDirection = nextDir;
+            return;
+        }
 
-            Debug.LogFormat("OnMove: {0}", dir);
+        var nextDir = Mathf.Abs(dir.x) > Mathf.Abs(dir.y) ? new Vector3(dir.x, 0f, 0f).normalized : new Vector3(0f, 0f, dir.y).normalized;
+        desiredDirection = nextDir;
 
-            Vector2Int nextLoc = new Vector2Int(mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z);
-            if(!Game.Instance.Grid.TileIsObstructed(nextLoc))
+        //Debug.LogFormat("OnMove: {0}", dir);
+
+        Vector2Int nextLoc = new Vector2Int(mover.GridLoc.x + (int)desiredDirection.x, mover.GridLoc.y + (int)desiredDirection.z);
+        if (!Game.Instance.Grid.TileIsObstructed(nextLoc))
+        {
+            rotator.DesiredDirection = desiredDirection;
+            if (CanChangeDirection)
             {
-                rotator.DesiredDirection = desiredDirection;
-                if (CanChangeDirection)
-                {
-                    Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
-                    mover.DesiredPosition = desiredWorldPos;
-                    //desiredDirection = Vector3.zero;
-                }
-            } 
+                Game.Instance.GridToWorld(nextLoc, out Vector3 desiredWorldPos);
+                mover.DesiredPosition = desiredWorldPos;
+                //desiredDirection = Vector3.zero;
+            }
         }
     }
 

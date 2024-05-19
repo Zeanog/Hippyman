@@ -20,14 +20,13 @@ public abstract class AAdversaryController : AController
 
     [SerializeField]
     protected LayerMask layer;
-    protected int prevLayer;
+    protected LayerMask prevLayer;
 
     protected Vector3 desiredWorldPos;
 
     protected override void Awake()
     {
         base.Awake();
-        layer = LayerMask.GetMask("Monsters");
     }
 
     protected override void Start()
@@ -51,7 +50,7 @@ public abstract class AAdversaryController : AController
         base.OnAssigned(character);
 
         prevLayer = owner.gameObject.layer;
-        owner.gameObject.layer = (int)Mathf.Log(layer.value, 2f);
+        owner.gameObject.layer = (int)Mathf.Log( layer, 2f );
 
         mover.OnChangedGridLoc += OnOwnerMoved;
         rotator.OnRotationComplete += OnOwnerRotationCompleted;
@@ -67,24 +66,24 @@ public abstract class AAdversaryController : AController
 
     public override void OnUnassigned()
     {
-        owner.gameObject.layer = prevLayer;
-
-        base.OnUnassigned();
-
-        mover.OnChangedGridLoc -= OnOwnerMoved;
-        rotator.OnRotationComplete -= OnOwnerRotationCompleted;
-
         if (Path != null)
         {
             Path.Destroy();
             Path = null;
         }
 
+        owner.gameObject.layer = prevLayer;
+
+        mover.OnChangedGridLoc -= OnOwnerMoved;
+        rotator.OnRotationComplete -= OnOwnerRotationCompleted;
+
         Game.Instance.RemoveListener<Game>("OnGameStart", OnGameStart);
         Game.Instance.RemoveListener<Game>("OnGameOver", OnGameOver);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnCollected", OnEvidenceCollected);
         Game.Instance.RemoveListener<EvidenceofCorruption>("OnLost", OnEvidenceLost);
         Game.Instance.RemoveListener<Adversary>("OnGoToJail", OnGoToJail);
+
+        base.OnUnassigned();
     }
 
     protected virtual void OnGameStart(object sender, object evtData)
@@ -160,8 +159,8 @@ public abstract class AAdversaryController : AController
             Path = null;
         }
 
-        //mover.Stop();
-        Debug.LogFormat("{0} is creating new path for {1}", GetType().Name, owner.name);
+        mover.Stop(true);
+        //Debug.LogFormat("{0} is creating new path for {1}", GetType().Name, owner.name);
         var newPath = PathToTarget();
         if (Path != null)
         {
