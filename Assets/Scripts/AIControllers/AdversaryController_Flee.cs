@@ -22,7 +22,11 @@ public class AdversaryController_Flee : AAdversaryController
         var corners = Game.Instance.Grid.Corners;
         var cornerIndex = (currentCornerIndex + incrementAmount + 1) % corners.Length;
 
-        Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos);
+        if( !Game.Instance.GridToWorld(corners[cornerIndex], out Vector3 targetPos) )
+        {
+            return null;
+        }
+
         var newPath = PathTo(targetPos);
         newPath.OnComplete += () =>
         {

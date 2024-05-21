@@ -1,6 +1,5 @@
 ﻿using Neo.StateMachine.Wrappers;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public abstract class AAdversaryController : AController
 {
@@ -9,6 +8,10 @@ public abstract class AAdversaryController : AController
         get => path;
 
         protected set {
+            if(path != null)
+            {
+                path.Dispose();
+            }
             path = value;
         }
     }
@@ -23,16 +26,6 @@ public abstract class AAdversaryController : AController
     protected LayerMask prevLayer;
 
     protected Vector3 desiredWorldPos;
-
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-    }
 
     protected override void Update()
     {
@@ -66,11 +59,7 @@ public abstract class AAdversaryController : AController
 
     public override void OnUnassigned()
     {
-        if (Path != null)
-        {
-            Path.Destroy();
-            Path = null;
-        }
+        Path = null;
 
         owner.gameObject.layer = prevLayer;
 
@@ -153,22 +142,18 @@ public abstract class AAdversaryController : AController
             return false;
         }
 
-        if(Path != null)
-        {
-            Path.Invalidate();
-            Path = null;
-        }
-
-        mover.Stop(true);
+        Path = null;
+        
         //Debug.LogFormat("{0} is creating new path for {1}", GetType().Name, owner.name);
         var newPath = PathToTarget();
         if (Path != null)
         {
-            path.Destroy();
+            Path.Dispose();
         }
         Path = newPath;
         if (Path == null)
         {
+            mover.Stop(true);
             return false;
         }
 

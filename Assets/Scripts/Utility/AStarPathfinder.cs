@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Path
+public class Path : IDisposable
 {
     public class Node
     {
@@ -39,6 +39,7 @@ public class Path
 
     public event Action OnComplete;
     public event Action OnInvalidation;
+    public event Action OnDestroy;
 
     protected bool isValid = false;
     public bool IsValid {
@@ -74,6 +75,12 @@ public class Path
         IsValid = true;        
     }
 
+    public void Dispose()
+    {
+        IsValid = false;
+        OnDestroy?.Invoke();
+    }
+
     public   void Invalidate()
     {
         if(!IsValid) { return; }
@@ -82,11 +89,6 @@ public class Path
 
         OnInvalidation?.Invoke();
         OnInvalidation = null;
-    }
-
-    public void Destroy()
-    {
-        Invalidate();
     }
 
     public  bool    FindNode( Vector2Int loc, out Node node )
@@ -117,7 +119,9 @@ public class Path
     {
         if(!nodeMap.TryGetValue(loc, out node))
         {
-            return false;
+            var deltaLoc = Nodes.First.Value.GridLocation - loc;
+            node = Nodes.First;
+            return Mathf.Abs(deltaLoc.x) <= 1 && Mathf.Abs(deltaLoc.y) <= 1;//Are we one node away?
         }
 
         node = node.Next;
@@ -146,6 +150,8 @@ public class Path
             var firstNode = Nodes.First.Value;
             var nextNode = Nodes.First.Next.Value;
 
+            currentNode = Nodes.First;
+
             Game.Instance.GridToWorld(nextNode.GridLocation, out Vector3 toPos);
             Game.Instance.GridToWorld(firstNode.GridLocation, out startPos);
             return Vector3.Normalize(toPos - startPos);
@@ -160,6 +166,8 @@ public class Path
 
     public bool DetermineNextDirection(out Vector3 nextPos, out Vector3 dir)
     {
+        System.Diagnostics.Debug.Assert(currentNode != null);
+
         Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 fromPos);
 
         currentNode = currentNode.Next;
@@ -167,8 +175,8 @@ public class Path
         {
             dir = Vector3.zero;
             nextPos = Vector3.zero;
-            Invalidate();
             OnComplete?.Invoke();
+            Dispose();
             return false;
         }
 
@@ -185,10 +193,12 @@ public class Path
         {
             dir = Vector3.zero;
             nextPos = Vector3.zero;
-            Invalidate();
             OnComplete?.Invoke();
+            Dispose();
             return false;
         }
+
+        Debug.LogFormat("");
 
         Game.Instance.GridToWorld(currentNode.Value.GridLocation, out Vector3 toPos);
         Game.Instance.GridToWorld(from, out Vector3 fromPos);

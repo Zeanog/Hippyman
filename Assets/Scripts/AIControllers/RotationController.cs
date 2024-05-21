@@ -7,13 +7,15 @@ public class RotationController : MonoBehaviour
 {
     [SerializeField]
     protected float rotationalSpeed = 1f;
-    public float RotationalSpeed => rotationalSpeed;
+    public float RotationalSpeed => rotationalSpeed * Game.Instance.SpeedScale;
 
     protected Vector3   desiredDirection = Vector3.zero;
     public virtual Vector3 DesiredDirection { 
         get => desiredDirection;
         set {
             if(desiredDirection == value) return;
+
+            Debug.LogFormat("{0} has a desired direction of {1}", name, desiredDirection);
 
             desiredDirection = value;
             RotationIsComplete = false;

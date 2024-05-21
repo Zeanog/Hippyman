@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Neo;
-using System.Xml.Schema;
 using Neo.StateMachine.Wrappers;
 
 public class Game : EventManager
@@ -41,6 +39,8 @@ public class Game : EventManager
     {
         advisories.Remove(adv);
     }
+
+    public int  AdversaryCount => advisories.Count;
 
     //////////////////////////////////////////////////////////////////////////////////
 
@@ -81,6 +81,10 @@ public class Game : EventManager
 
     [SerializeField]
     protected AnimatedText beginPlayText;
+
+    [SerializeField]
+    protected float speedScale = 1f;
+    public float SpeedScale => speedScale;
 
     [Serializable]
     public class ScoreNotificationUnityEvent : UnityEvent<string> {}

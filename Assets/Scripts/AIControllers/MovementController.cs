@@ -4,7 +4,11 @@ using System;
 public class MovementController : MonoBehaviour
 {
     [HideInInspector]
-    public float                    LinearSpeed;
+    protected float linearSpeed;
+    public float LinearSpeed {
+        get => linearSpeed * Game.Instance.SpeedScale;
+        set { linearSpeed = value; }
+    }
 
     [HideInInspector]
     public AController              Controller;
@@ -24,6 +28,8 @@ public class MovementController : MonoBehaviour
             var delta = desiredPosition - transform.position;
             desiredDirection = delta.normalized;
 
+            Debug.LogFormat("{0} has a desired position of {1}", name, desiredPosition);
+
             IsAtDestination = false;
         }
     }
@@ -42,6 +48,11 @@ public class MovementController : MonoBehaviour
 
     public virtual float DetermineStepLength()
     {
+        if(desiredDirection == Vector3.zero)
+        {
+            return 0f;
+        }
+
         Ray ray = new Ray(transform.position, desiredDirection);
         bool collides = Physics.Raycast(ray, out RaycastHit info, Neo.GridComponent.TileDiameter, Game.Instance.LayerMaskWall);
         float stepLength = 0f;
@@ -74,7 +85,7 @@ public class MovementController : MonoBehaviour
         var delta = DesiredPosition - transform.position;
         delta.y = 0f;
         var deltaDist = delta.magnitude;
-        var dirToDesiredPos = delta / deltaDist;
+        var dirToDesiredPos = deltaDist <= 0f ? Vector3.zero : delta / deltaDist;
         stepLength = Mathf.Min(stepLength, deltaDist);
 
         //(LinearSpeed * 0.007f)
