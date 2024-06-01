@@ -4,4 +4,6 @@ I'm slowly adding gameplay features
 
 All models and animations are from Mixamo.com
 
+The idea is you play a hippy and your boss, the mayer, and other authority figures.  The large pellets are 'Evidence of Corruption' and when the authority figures get caught they turn into handcuffs and go to jail.  All the small pellets add up to $10.  :P
+
 I am working on pathing currently.
